@@ -1,0 +1,41 @@
+# PHPStan configuration file
+
+parameters:
+  # Level 5 is a good starting point for Laravel projects
+  level: 5
+  
+  # Paths to analyze
+  paths:
+    - app
+    - config
+    - database
+    - routes
+    - tests
+  
+  # Exclude paths from analysis
+  excludePaths:
+    - vendor/*
+    - storage/*
+    - bootstrap/cache/*
+    - node_modules/*
+  
+  # Ignore specific errors
+  ignoreErrors:
+    # Eloquent static methods
+    - '#Call to an undefined (static )?method App\\Models\\[a-zA-Z0-9_]+::[a-zA-Z0-9_]+\(\)#'
+    # PHPUnit assertions
+    - '#Call to method PHPUnit\\Framework\\Assert::assertTrue\(\) with true will always evaluate to true#'
+    # Mockery
+    - '#Call to an undefined method Mockery\\ExpectationInterface\|Mockery\\HigherOrderMessage::[a-zA-Z0-9_]+\(\)#'
+    - '#Property .* does not accept Mockery\\MockInterface#'
+    - '#Parameter .* expects .*, Mockery\\MockInterface given#'
+    # Closures
+    - '#Undefined variable: \$this#'
+  
+  # Laravel specific settings
+  universalObjectCratesClasses:
+    - Illuminate\Database\Eloquent\Model
+    - Illuminate\Support\Collection
+  
+  # Disable warning about unmatched ignored errors
+  reportUnmatchedIgnoredErrors: false

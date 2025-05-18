@@ -1,0 +1,31 @@
+/vendor/
+node_modules/
+npm-debug.log
+yarn-error.log
+
+public/storage
+public/hot
+
+storage/*.key
+.phpactor.json
+auth.json
+
+# Ignore generated Laravel env in app folder
+app/.env
+app/.env.testing
+
+# Ignore local environment files
+.env
+.env.testing
+
+# Ignore VSCode settings
+.vscode/
+
+# Ignore PHPUnit cache
+.phpunit.result.cache
+
+# Ignore PHP CS Fixer cache
+app/.php-cs-fixer.cache
+
+# Ignore PHPStan baseline
+app/phpstan-baseline.neon
