@@ -8,6 +8,16 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
+/**
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Models\User query()
+ * @method static \App\Models\User factory(array $attributes = [])
+ * @method static \App\Models\User firstOrCreate(array $attributes, array $values = [])
+ * @method static \App\Models\User|null firstWhere(string $column, mixed $value)
+ * @method static \App\Models\User updateOrCreate(array $attributes, array $values = [])
+ * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Passport\Token[] $tokens
+ * @method \Illuminate\Database\Eloquent\Relations\HasMany tokens()
+ * @method \Laravel\Passport\PersonalAccessTokenResult createToken(string $name, array $scopes = [])
+ */
 class User extends Authenticatable
 {
     use HasApiTokens;

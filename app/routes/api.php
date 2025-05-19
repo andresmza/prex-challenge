@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,7 +14,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Protected route used for testing purposes only
-Route::middleware('auth:api')->get('/me', function (Request $request) {
-    return $request->user();
-});
+// Auth routes
+Route::post('/login', [AuthController::class, 'login']);
