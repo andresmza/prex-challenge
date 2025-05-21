@@ -10,6 +10,8 @@ use App\Services\Auth\FakeUserAuthenticator;
 use App\Services\Auth\PassportTokenIssuer;
 use App\Services\Auth\TokenIssuerInterface;
 use App\Services\Auth\UserAuthenticatorInterface;
+use App\Services\Favorite\FavoriteService;
+use App\Services\Favorite\FavoriteServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -29,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
         }
 
         $this->app->bind(AuthServiceInterface::class, AuthService::class);
+
+        $this->app->bind(FavoriteServiceInterface::class, FavoriteService::class);
     }
 
     /**
