@@ -1,0 +1,1256 @@
+{
+	"info": {
+		"_postman_id": "28136e50-fcdd-45a8-8bcf-a0da4905170a",
+		"name": "PrexChallenge",
+		"description": "**API Collection: PrexChallenge REST API**  \n  \nA Laravel-powered RESTful service that integrates with the GIPHY public API and provides:\n\n1. **OAuth2 Authentication** – secure login to obtain a Bearer token.\n    \n2. **GIPHY Proxy** – search GIFs and retrieve individual GIF details.\n    \n3. **Favorites Management** – save and list user’s favorite GIFs.\n    \n\nAll endpoints require a valid `Authorization: Bearer` header (except `/api/login`). Responses use standard HTTP status codes, JSON bodies with camelCase keys, and Laravel’s built-in validation error format.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "3055665"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// 1) Parse the JSON response",
+									"const data = pm.response.json();",
+									"",
+									"// 2) Save token_type and access_token to the active Environment",
+									"pm.environment.set(\"access_token\", data.access_token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						},
+						"description": "Authenticate a user with email/password and receive a Bearer token valid for 30 minutes. Use this token in the `Authorization` header for all subsequent calls."
+					},
+					"response": [
+						{
+							"name": "Login (Success)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.23.4"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 May 2025 20:55:41 GMT"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"access_token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiODMxZTEwZjBjOWZmY2Q4NjE4N2EzYjEzMzNmNGVmMDFmYjc1YzU3ZmU2Zjk4ZGYyOGIxZGNmODQwNjhlNGIxN2JmNTJlOGU2MDFiYzc4YmUiLCJpYXQiOjE3NDc4NjA5NDEuODMxOTY1LCJuYmYiOjE3NDc4NjA5NDEuODMxOTY2LCJleHAiOjE3NDc4NjI3NDEuODMwMzUsInN1YiI6IjIxIiwic2NvcGVzIjpbXX0.D-nYJnTfHlgQOlXKsuTXnG471t-By2peZQ8LroV8uQFLoEtG7eKHU5IwY7dzDXsALoAy33C6DBw5f-x551GiyEa_ZuPgg9-zO2MVEIFRTM3r8MVK_T_Se_1MramWHPQZOGq3iZwI2iUk26NLgYOmPjsk2iWWvfiQuH4EjENgewg4dtKwBfIPQjY61aQyk43hVfFVCxIjYHozVT0gjUIp9m1ehtB79qqgRq8PoQJ5hFHTwC9fLxRse_uX-zZqjsIvePeXFfg0DU_lupgxvPzkjn5F95URCrNYVbnhdS6qoo0cA93_tk4TthMJyedN6fBJu9Jz2xZBnd0lHYT2Z5hx8DJvrsPWhIf7cMdfmzVO3iiWuc8oPhNSgt84_idueZQNlO_ERuOssrF4lmnl4Tn16j21FSVaSw5f3Pq48umiOvMvMZS4oqZ-Qw8shtuUgZZWuZivHeBBUkogmeyR0xrNevDobfY_YGp_HbvU611bjyuypQ5N65oCRpOVyxrS8UA2o6nNGJmgxBogp0BaNPqVbXVZY1LbmmjkLvaHI1MzSG0HLbrxhi3UWjwfc-HWXBVhVy2WmnVRqUZXbeS0yK8rVx7y8a3s5o4TRH23Vh716JzMZUKclG42SZPnQ0y-0MN0rub68Beqzg0gaj7fD6dYuuRg4ZPAflfw3ZYwfM3F3QA\",\n    \"token_type\": \"Bearer\",\n    \"expires_in\": 1800,\n    \"user\": {\n        \"id\": 21,\n        \"name\": \"Test User\",\n        \"email\": \"test@example.com\"\n    }\n}"
+						},
+						{
+							"name": "Login (invalid credentials)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/login",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"login"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.23.4"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 May 2025 20:56:36 GMT"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "56"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Invalid credentials\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Handles obtaining and refreshing access tokens for all other API calls.\n\n- **Purpose:** Securely authenticate users via email/password and issue a time-limited personal access token.\n    \n- **Flow:**\n    \n    1. **Login**: `POST /api/login` with credentials.\n        \n    2. **Receive**: `access_token` (Bearer, valid 30 minutes), `expires_in`, and basic user profile.\n        \n    3. **Use**: include `Authorization: Bearer` on all subsequent requests."
+		},
+		{
+			"name": "Giphy",
+			"item": [
+				{
+					"name": "Search",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/gifs?query=cat&limit=10&offset=0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"gifs"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "cat",
+									"description": "Search term (e.g. “cat”)"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Max results per page (1–50)"
+								},
+								{
+									"key": "offset",
+									"value": "0",
+									"description": "Record offset for pagination"
+								}
+							]
+						},
+						"description": "Search for GIFs by text. Supports pagination."
+					},
+					"response": [
+						{
+							"name": "Search",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/gifs?query=cat&limit=10&offset=0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"gifs"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "cat"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "offset",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.23.4"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 May 2025 20:53:49 GMT"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "57"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [
+								{
+									"expires": "Invalid Date"
+								}
+							],
+							"body": "{\n    \"data\": [\n        {\n            \"id\": \"CjmvTCZf2U3p09Cn0h\",\n            \"url\": \"https://media2.giphy.com/media/v1.Y2lkPWJiZTUwYmQxMzVsamwwa2cycnBoZDYxa3k3NGtpeXR0NGxubmZiY2cwczQ4MWxjdCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/CjmvTCZf2U3p09Cn0h/giphy.gif\",\n            \"title\": \"Im Ready Lets Go GIF by Leroy Patterson\"\n        },\n        {\n            \"id\": \"mlvseq9yvZhba\",\n            \"url\": \"https://media0.giphy.com/media/v1.Y2lkPWJiZTUwYmQxMzVsamwwa2cycnBoZDYxa3k3NGtpeXR0NGxubmZiY2cwczQ4MWxjdCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/mlvseq9yvZhba/giphy.gif\",\n            \"title\": \"Bored Cat GIF\"\n        },\n        {\n            \"id\": \"l0ExdMHUDKteztyfe\",\n            \"url\": \"https://media3.giphy.com/media/v1.Y2lkPWJiZTUwYmQxMzVsamwwa2cycnBoZDYxa3k3NGtpeXR0NGxubmZiY2cwczQ4MWxjdCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l0ExdMHUDKteztyfe/giphy.gif\",\n            \"title\": \"cat smoking GIF by sheepfilms\"\n        },\n        {\n            \"id\": \"MDJ9IbxxvDUQM\",\n            \"url\": \"https://media3.giphy.com/media/v1.Y2lkPWJiZTUwYmQxMzVsamwwa2cycnBoZDYxa3k3NGtpeXR0NGxubmZiY2cwczQ4MWxjdCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/MDJ9IbxxvDUQM/giphy.gif\",\n            \"title\": \"In Love Cat GIF\"\n        },\n        {\n            \"id\": \"v6aOjy0Qo1fIA\",\n            \"url\": \"https://media3.giphy.com/media/v1.Y2lkPWJiZTUwYmQxMzVsamwwa2cycnBoZDYxa3k3NGtpeXR0NGxubmZiY2cwczQ4MWxjdCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/v6aOjy0Qo1fIA/giphy.gif\",\n            \"title\": \"Bored Cat GIF\"\n        },\n        {\n            \"id\": \"vFKqnCdLPNOKc\",\n            \"url\": \"https://media1.giphy.com/media/v1.Y2lkPWJiZTUwYmQxMzVsamwwa2cycnBoZDYxa3k3NGtpeXR0NGxubmZiY2cwczQ4MWxjdCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/vFKqnCdLPNOKc/giphy.gif\",\n            \"title\": \"White Cat Hello GIF\"\n        },\n        {\n            \"id\": \"GeimqsH0TLDt4tScGw\",\n            \"url\": \"https://media3.giphy.com/media/v1.Y2lkPWJiZTUwYmQxMzVsamwwa2cycnBoZDYxa3k3NGtpeXR0NGxubmZiY2cwczQ4MWxjdCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/GeimqsH0TLDt4tScGw/giphy.gif\",\n            \"title\": \"Vibing White Cat GIF\"\n        },\n        {\n            \"id\": \"yFQ0ywscgobJK\",\n            \"url\": \"https://media4.giphy.com/media/v1.Y2lkPWJiZTUwYmQxMzVsamwwa2cycnBoZDYxa3k3NGtpeXR0NGxubmZiY2cwczQ4MWxjdCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/yFQ0ywscgobJK/giphy.gif\",\n            \"title\": \"Oh No Facepalm GIF\"\n        },\n        {\n            \"id\": \"5i7umUqAOYYEw\",\n            \"url\": \"https://media0.giphy.com/media/v1.Y2lkPWJiZTUwYmQxMzVsamwwa2cycnBoZDYxa3k3NGtpeXR0NGxubmZiY2cwczQ4MWxjdCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/5i7umUqAOYYEw/giphy.gif\",\n            \"title\": \"Cat Omg GIF\"\n        },\n        {\n            \"id\": \"nR4L10XlJcSeQ\",\n            \"url\": \"https://media3.giphy.com/media/v1.Y2lkPWJiZTUwYmQxMzVsamwwa2cycnBoZDYxa3k3NGtpeXR0NGxubmZiY2cwczQ4MWxjdCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/nR4L10XlJcSeQ/giphy.gif\",\n            \"title\": \"No Way Cat GIF\"\n        }\n    ]\n}"
+						},
+						{
+							"name": "Search (unauthorized)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/gifs?query=cat&limit=10&offset=0",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"gifs"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "cat"
+										},
+										{
+											"key": "limit",
+											"value": "10"
+										},
+										{
+											"key": "offset",
+											"value": "0"
+										}
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.23.4"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 22 May 2025 03:02:20 GMT"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Unauthenticated.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get by ID",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/gifs/:gifId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"gifs",
+								":gifId"
+							],
+							"variable": [
+								{
+									"key": "gifId",
+									"value": "CjmvTCZf2U3p09Cn0h"
+								}
+							]
+						},
+						"description": "Retrieve a single GIF’s details by its Giphy ID."
+					},
+					"response": [
+						{
+							"name": "Get by ID (success)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/gifs/:gifId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"gifs",
+										":gifId"
+									],
+									"variable": [
+										{
+											"key": "gifId",
+											"value": "CjmvTCZf2U3p09Cn0h"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.23.4"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 May 2025 20:50:14 GMT"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "58"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"CjmvTCZf2U3p09Cn0h\",\n    \"url\": \"https://media2.giphy.com/media/v1.Y2lkPWJiZTUwYmQxNXNjdWxnNnYzMHFxemVvMzcwZnpxdjNwcXRtbXA5cGVydHpleWI2cSZlcD12MV9naWZzX2dpZklkJmN0PWc/CjmvTCZf2U3p09Cn0h/giphy.gif\",\n    \"title\": \"Im Ready Lets Go GIF by Leroy Patterson\"\n}"
+						},
+						{
+							"name": "Get by ID (not found)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/api/gifs/:gifId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"gifs",
+										":gifId"
+									],
+									"variable": [
+										{
+											"key": "gifId",
+											"value": "CjmvTCZf2U3p09Cn0hd"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.23.4"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 May 2025 20:55:01 GMT"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"GIF not found\",\n    \"type\": \"not_found\",\n    \"status\": 404\n}"
+						},
+						{
+							"name": "Get by ID (unauthorized)",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/gifs/:gifId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"gifs",
+										":gifId"
+									],
+									"variable": [
+										{
+											"key": "gifId",
+											"value": "CjmvTCZf2U3p09Cn0h"
+										}
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.23.4"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 22 May 2025 03:02:35 GMT"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Unauthenticated.\"\n}"
+						}
+					]
+				}
+			],
+			"description": "A thin, authenticated wrapper around the official GIPHY API.\n\n- **Purpose:** Allow clients to search the GIPHY catalog and fetch individual GIF metadata without exposing GIPHY keys to end users.\n    \n- **Endpoints:**\n    \n    - **Search**: `GET /api/gifs`  \n          \n        • Query by text, optional `limit` & `offset` for pagination.\n        \n    - **Get by ID**: `GET /api/gifs/{gifId}`  \n          \n        • Retrieve a single GIF’s URL, title, and ID.\n        \n- **Error Handling:**  \n      \n    • `422` for validation errors (missing query/id).  \n      \n    • `404` when GIF not found.  \n      \n    • `401` if token is missing or invalid."
+		},
+		{
+			"name": "Favorite",
+			"item": [
+				{
+					"name": "Store",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"gif_id\": \"CjmvTCZf2U3p09Cn0h\",\n    \"alias\": \"Gif favorito #1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/favorites",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"favorites"
+							]
+						},
+						"description": "Save a GIF to the authenticated user’s favorites.  \n  \nFirst validates that the GIF exists in Giphy, then stores it with a custom alias."
+					},
+					"response": [
+						{
+							"name": "Store (success)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"gif_id\": \"l0ExdMHUDKteztyfe\",\n    \"alias\": \"Gif favorito #1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/favorites",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"favorites"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.23.4"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 May 2025 20:52:00 GMT"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{}"
+						},
+						{
+							"name": "Store (already exists)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"gif_id\": \"l0ExdMHUDKteztyfe\",\n    \"alias\": \"Gif favorito #1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/favorites",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"favorites"
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.23.4"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 May 2025 20:52:26 GMT"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "58"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"This GIF is already in your favorites\"\n}"
+						},
+						{
+							"name": "Store (alias duplicated)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"gif_id\": \"MDJ9IbxxvDUQM\",\n    \"alias\": \"Gif favorito #1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/favorites",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"favorites"
+									]
+								}
+							},
+							"status": "Conflict",
+							"code": 409,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.23.4"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 May 2025 20:53:18 GMT"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "59"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"This alias is already used for another favorite\"\n}"
+						},
+						{
+							"name": "Store (GIF does not exists)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"gif_id\": \"l0ExdMHUDKteztyfes\",\n    \"alias\": \"Gif favorito #1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/favorites",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"favorites"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.23.4"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 21 May 2025 23:36:00 GMT"
+								},
+								{
+									"key": "X-RateLimit-Limit",
+									"value": "60"
+								},
+								{
+									"key": "X-RateLimit-Remaining",
+									"value": "53"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"This GIF does not exist in Giphy\"\n}"
+						},
+						{
+							"name": "Store (unauthorized)",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"gif_id\": \"CjmvTCZf2U3p09Cn0hs\",\n    \"alias\": \"Gif favorito #2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/favorites",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"favorites"
+									]
+								}
+							},
+							"status": "Unauthorized",
+							"code": 401,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.23.4"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.2.28"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 22 May 2025 03:01:41 GMT"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Unauthenticated.\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Manage each authenticated user’s personal list of saved GIFs.\n\n- **Purpose:** Let users bookmark favorite GIFs (pulled from GIPHY) with custom aliases.\n    \n- **Endpoints:**\n    \n    - **Add Favorite**: `POST /api/favorites`  \n          \n        • Body: `gif_id` (GIPHY ID), `alias` (custom name).  \n          \n        • Validates existence in GIPHY first.\n        \n- **Error Handling:**  \n      \n    • `201 Created` on success.  \n      \n    • `404` if the GIF doesn’t exist upstream.  \n      \n    • `409 Conflict` if already favorited.  \n      \n    • `422` for missing/invalid body fields.  \n      \n    • `401` if token is missing or invalid."
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

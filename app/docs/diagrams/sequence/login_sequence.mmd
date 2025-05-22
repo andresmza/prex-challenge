@@ -1,0 +1,50 @@
+%% Diagram of the login process
+
+sequenceDiagram
+    participant Client
+    participant Router
+    participant LogUserAction
+    participant AuthController
+    participant LoginRequest
+    participant AuthService
+    participant UserAuthenticator
+    participant TokenIssuer
+    participant User
+    participant ActionLogService
+    participant ActionLogRepository
+
+    Client->>Router: POST /api/login
+    Router->>LogUserAction: Handle request
+    LogUserAction->>AuthController: Forward request
+    
+    AuthController->>LoginRequest: Validate request
+    LoginRequest-->>AuthController: Return LoginDTO
+    
+    AuthController->>AuthService: login(LoginDTO)
+    AuthService->>UserAuthenticator: authenticate(credentials)
+    UserAuthenticator->>User: Find user by email
+    User-->>UserAuthenticator: Return User or null
+    
+    alt User authenticated
+        UserAuthenticator-->>AuthService: Return User
+        AuthService->>TokenIssuer: issueToken(User)
+        TokenIssuer-->>AuthService: Return token information
+        AuthService-->>AuthController: Return LoginResponseDTO
+        AuthController-->>LogUserAction: 200 OK with token and user data
+        
+        LogUserAction->>ActionLogService: store(ActionLogDTO)
+        ActionLogService->>ActionLogRepository: Save log
+        ActionLogRepository-->>ActionLogService: Confirm save
+        
+        LogUserAction-->>Client: 200 OK with token and user data
+    else Authentication failed
+        UserAuthenticator-->>AuthService: Return null
+        AuthService-->>AuthController: Return null
+        AuthController-->>LogUserAction: 401 Unauthorized
+        
+        LogUserAction->>ActionLogService: store(ActionLogDTO)
+        ActionLogService->>ActionLogRepository: Save log
+        ActionLogRepository-->>ActionLogService: Confirm save
+        
+        LogUserAction-->>Client: 401 Unauthorized
+    end

@@ -1,0 +1,77 @@
+%% Diagram of searching GIFs using the Giphy API
+
+sequenceDiagram
+    participant Client
+    participant Router
+    participant LogUserAction
+    participant AuthMiddleware
+    participant GiphyController
+    participant SearchGifsRequest
+    participant GiphyService
+    participant HttpClient
+    participant GiphyAPI
+    participant ActionLogService
+    participant ActionLogRepository
+
+    Client->>Router: GET /api/gifs?query=...
+    Router->>LogUserAction: Handle request
+    LogUserAction->>AuthMiddleware: Forward request
+    
+    AuthMiddleware->>AuthMiddleware: Validate token
+    alt Token valid
+        AuthMiddleware->>GiphyController: Forward authenticated request
+        
+        GiphyController->>SearchGifsRequest: Validate request
+        SearchGifsRequest-->>GiphyController: Return SearchGifsDTO
+        
+        GiphyController->>GiphyService: searchGifs(SearchGifsDTO)
+        GiphyService->>GiphyService: validateApiConfiguration()
+        
+        alt Configuration valid
+            GiphyService->>HttpClient: Request GIPHY search API
+            HttpClient->>GiphyAPI: GET /search with parameters
+            GiphyAPI-->>HttpClient: JSON response
+            HttpClient-->>GiphyService: Response
+            
+            alt API Success
+                GiphyService->>GiphyService: Process data and create DTOs
+                GiphyService-->>GiphyController: Return SearchGifsResultDTO
+                GiphyController-->>AuthMiddleware: 200 OK with results
+                AuthMiddleware-->>LogUserAction: 200 OK with results
+                
+                LogUserAction->>ActionLogService: store(ActionLogDTO)
+                ActionLogService->>ActionLogRepository: Save log
+                ActionLogRepository-->>ActionLogService: Confirm save
+                
+                LogUserAction-->>Client: 200 OK with results
+            else API Error
+                GiphyService-->>GiphyController: GiphyApiException
+                GiphyController-->>AuthMiddleware: HTTP error with message
+                AuthMiddleware-->>LogUserAction: HTTP error with message
+                
+                LogUserAction->>ActionLogService: store(ActionLogDTO)
+                ActionLogService->>ActionLogRepository: Save log
+                ActionLogRepository-->>ActionLogService: Confirm save
+                
+                LogUserAction-->>Client: HTTP error with message
+            end
+        else Invalid Configuration
+            GiphyService-->>GiphyController: GiphyApiException (config error)
+            GiphyController-->>AuthMiddleware: 500 Internal Server Error
+            AuthMiddleware-->>LogUserAction: 500 Internal Server Error
+            
+            LogUserAction->>ActionLogService: store(ActionLogDTO)
+            ActionLogService->>ActionLogRepository: Save log
+            ActionLogRepository-->>ActionLogService: Confirm save
+            
+            LogUserAction-->>Client: 500 Internal Server Error
+        end
+    else Token invalid
+        AuthMiddleware-->>LogUserAction: 401 Unauthorized
+        
+        LogUserAction->>ActionLogService: store(ActionLogDTO)
+        ActionLogService->>ActionLogRepository: Save log
+        ActionLogRepository-->>ActionLogService: Confirm save
+        
+        LogUserAction-->>Client: 401 Unauthorized
+    end

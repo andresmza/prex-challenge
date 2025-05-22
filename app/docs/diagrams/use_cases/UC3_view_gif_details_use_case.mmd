@@ -1,0 +1,32 @@
+graph TB
+    subgraph "UC3: View GIF Details"
+        UC3_1[Request GIF by ID]
+        UC3_2[Validate Request]
+        UC3_3[Fetch GIF from GIPHY API]
+        UC3_4[Process GIF Data]
+        UC3_5[Return GIF Details]
+        
+        UC3_1 --> UC3_2
+        UC3_2 --> UC3_3
+        UC3_3 --> UC3_4
+        UC3_4 --> UC3_5
+        
+        UC3_2 -.->|if invalid| UC3_6[Return Validation Error]
+        UC3_3 -.->|if not found| UC3_7[Return Not Found Error]
+        UC3_3 -.->|if API error| UC3_8[Handle API Error]
+    end
+    
+    User((User)) -->|initiates| UC3_1
+    GiphyAPI((GIPHY API)) -.->|provides data| UC3_3
+    UC3_5 -->|response to| User
+    UC3_6 -.->|response to| User
+    UC3_7 -.->|response to| User
+    UC3_8 -.->|response to| User
+    
+    classDef process fill:#f9f,stroke:#333,stroke-width:1px;
+    classDef actor fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef external fill:#bfb,stroke:#333,stroke-width:1px;
+    
+    class UC3_1,UC3_2,UC3_3,UC3_4,UC3_5,UC3_6,UC3_7,UC3_8 process;
+    class User actor;
+    class GiphyAPI external;

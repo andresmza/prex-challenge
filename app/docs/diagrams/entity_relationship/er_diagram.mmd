@@ -1,0 +1,36 @@
+erDiagram
+    USERS {
+        bigint id PK
+        string name
+        string email UK
+        timestamp email_verified_at
+        string password
+        string remember_token
+        timestamp created_at
+        timestamp updated_at
+    }
+    
+    FAVORITES {
+        bigint id PK
+        bigint user_id FK
+        string gif_id
+        string alias
+        timestamp created_at
+    }
+    
+    ACTION_LOGS {
+        bigint id PK
+        bigint user_id FK
+        string service
+        json request_body
+        int response_code
+        json response_body
+        string ip_address
+        timestamp created_at
+    }
+    
+    USERS ||--o{ FAVORITES : "has"
+    USERS ||--o{ ACTION_LOGS : "generates"
+    
+    %% Nota: Los GIFs no se almacenan en la base de datos local
+    %% Se obtienen a través de la API de Giphy

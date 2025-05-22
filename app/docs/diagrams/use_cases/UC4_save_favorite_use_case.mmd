@@ -1,0 +1,43 @@
+graph TB
+    subgraph "UC4: Save GIF as Favorite"
+        UC4_1[Submit GIF ID and Alias]
+        UC4_2[Validate Request]
+        UC4_3[Verify GIF Exists in GIPHY]
+        UC4_4[Check if Already Favorited]
+        UC4_5[Check if Alias is Unique]
+        UC4_6[Save to Favorites]
+        UC4_7[Confirm Addition]
+        
+        UC4_1 --> UC4_2
+        UC4_2 --> UC4_3
+        UC4_3 --> UC4_4
+        UC4_4 --> UC4_5
+        UC4_5 --> UC4_6
+        UC4_6 --> UC4_7
+        
+        UC4_2 -.->|if invalid| UC4_8[Return Validation Error]
+        UC4_3 -.->|if not exists| UC4_9[Return GIF Not Found Error]
+        UC4_4 -.->|if already favorited| UC4_10[Return Already Favorited Error]
+        UC4_5 -.->|if alias used| UC4_11[Return Alias Used Error]
+    end
+    
+    User((User)) -->|initiates| UC4_1
+    GiphyAPI((GIPHY API)) -.->|verifies GIF| UC4_3
+    Database[(Database)] -.->|checks| UC4_4
+    Database -.->|checks| UC4_5
+    Database <-.->|stores| UC4_6
+    UC4_7 -->|response to| User
+    UC4_8 -.->|response to| User
+    UC4_9 -.->|response to| User
+    UC4_10 -.->|response to| User
+    UC4_11 -.->|response to| User
+    
+    classDef process fill:#f9f,stroke:#333,stroke-width:1px;
+    classDef actor fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef external fill:#bfb,stroke:#333,stroke-width:1px;
+    classDef datastore fill:#ffd,stroke:#333,stroke-width:1px;
+    
+    class UC4_1,UC4_2,UC4_3,UC4_4,UC4_5,UC4_6,UC4_7,UC4_8,UC4_9,UC4_10,UC4_11 process;
+    class User actor;
+    class GiphyAPI external;
+    class Database datastore;

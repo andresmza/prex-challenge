@@ -1,0 +1,30 @@
+graph TB
+    subgraph "UC2: Search GIFs"
+        UC2_1[Provide Search Term]
+        UC2_2[Validate Request]
+        UC2_3[Forward Search to GIPHY API]
+        UC2_4[Process Results]
+        UC2_5[Return Formatted Results]
+        
+        UC2_1 --> UC2_2
+        UC2_2 --> UC2_3
+        UC2_3 --> UC2_4
+        UC2_4 --> UC2_5
+        
+        UC2_2 -.->|if invalid| UC2_6[Return Validation Error]
+        UC2_3 -.->|if API error| UC2_7[Handle API Error]
+    end
+    
+    User((User)) -->|initiates| UC2_1
+    GiphyAPI((GIPHY API)) -.->|provides data| UC2_3
+    UC2_5 -->|response to| User
+    UC2_6 -.->|response to| User
+    UC2_7 -.->|response to| User
+    
+    classDef process fill:#f9f,stroke:#333,stroke-width:1px;
+    classDef actor fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef external fill:#bfb,stroke:#333,stroke-width:1px;
+    
+    class UC2_1,UC2_2,UC2_3,UC2_4,UC2_5,UC2_6,UC2_7 process;
+    class User actor;
+    class GiphyAPI external;

@@ -1,0 +1,26 @@
+graph TB
+    subgraph "UC1: Authentication"
+        UC1_1[Login with Email and Password]
+        UC1_2[Validate Credentials]
+        UC1_3[Generate Access Token]
+        UC1_4[Return User Information]
+        
+        UC1_1 --> UC1_2
+        UC1_2 --> UC1_3
+        UC1_3 --> UC1_4
+        
+        UC1_2 -.->|if invalid| UC1_5[Return Authentication Error]
+    end
+    
+    User((User)) -->|initiates| UC1_1
+    Database[(Database)] -.->|provides user data| UC1_2
+    UC1_4 -->|response to| User
+    UC1_5 -.->|response to| User
+    
+    classDef process fill:#f9f,stroke:#333,stroke-width:1px;
+    classDef actor fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef datastore fill:#ffd,stroke:#333,stroke-width:1px;
+    
+    class UC1_1,UC1_2,UC1_3,UC1_4,UC1_5 process;
+    class User actor;
+    class Database datastore;

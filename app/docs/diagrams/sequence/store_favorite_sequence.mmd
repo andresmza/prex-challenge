@@ -1,0 +1,97 @@
+%% Diagram of storing a favorite GIF
+
+sequenceDiagram
+    participant Client
+    participant Router
+    participant LogUserAction
+    participant AuthMiddleware
+    participant FavoriteController
+    participant StoreFavoriteRequest
+    participant FavoriteService
+    participant GiphyService
+    participant FavoriteRepository
+    participant GiphyAPI
+    participant ActionLogService
+    participant ActionLogRepository
+
+    Client->>Router: POST /api/favorites
+    Router->>LogUserAction: Handle request
+    LogUserAction->>AuthMiddleware: Forward request
+    
+    AuthMiddleware->>AuthMiddleware: Validate token
+    alt Token valid
+        AuthMiddleware->>FavoriteController: Forward authenticated request
+        
+        FavoriteController->>StoreFavoriteRequest: Validate request
+        StoreFavoriteRequest-->>FavoriteController: Validated data
+        FavoriteController->>FavoriteController: Get authenticated user
+        FavoriteController->>FavoriteService: addFavorite(user, gifId, alias)
+
+        FavoriteService->>GiphyService: getGifById(gifId)
+        GiphyService->>GiphyAPI: Request GIF by ID
+        GiphyAPI-->>GiphyService: Response
+        GiphyService-->>FavoriteService: GifItemDTO|null
+
+        alt GIF exists on Giphy
+            FavoriteService->>FavoriteRepository: Check if GIF already in favorites
+            FavoriteRepository-->>FavoriteService: Result
+
+            alt GIF not in favorites
+                FavoriteService->>FavoriteRepository: Check if alias already used
+                FavoriteRepository-->>FavoriteService: Result
+
+                alt Alias not used
+                    FavoriteService->>FavoriteRepository: Add favorite
+                    FavoriteRepository-->>FavoriteService: Success
+                    FavoriteService-->>FavoriteController: {success: true, status_code: null}
+                    FavoriteController-->>AuthMiddleware: 201 Created
+                    AuthMiddleware-->>LogUserAction: 201 Created
+                    
+                    LogUserAction->>ActionLogService: store(ActionLogDTO)
+                    ActionLogService->>ActionLogRepository: Save log
+                    ActionLogRepository-->>ActionLogService: Confirm save
+                    
+                    LogUserAction-->>Client: 201 Created
+                else Alias already in use
+                    FavoriteService-->>FavoriteController: {success: false, message, status_code: 409}
+                    FavoriteController-->>AuthMiddleware: 409 Conflict
+                    AuthMiddleware-->>LogUserAction: 409 Conflict
+                    
+                    LogUserAction->>ActionLogService: store(ActionLogDTO)
+                    ActionLogService->>ActionLogRepository: Save log
+                    ActionLogRepository-->>ActionLogService: Confirm save
+                    
+                    LogUserAction-->>Client: 409 Conflict
+                end
+            else GIF already in favorites
+                FavoriteService-->>FavoriteController: {success: false, message, status_code: 409}
+                FavoriteController-->>AuthMiddleware: 409 Conflict
+                AuthMiddleware-->>LogUserAction: 409 Conflict
+                
+                LogUserAction->>ActionLogService: store(ActionLogDTO)
+                ActionLogService->>ActionLogRepository: Save log
+                ActionLogRepository-->>ActionLogService: Confirm save
+                
+                LogUserAction-->>Client: 409 Conflict
+            end
+        else GIF not found
+            FavoriteService-->>FavoriteController: {success: false, message, status_code: 404}
+            FavoriteController-->>AuthMiddleware: 404 Not Found
+            AuthMiddleware-->>LogUserAction: 404 Not Found
+            
+            LogUserAction->>ActionLogService: store(ActionLogDTO)
+            ActionLogService->>ActionLogRepository: Save log
+            ActionLogRepository-->>ActionLogService: Confirm save
+            
+            LogUserAction-->>Client: 404 Not Found
+        end
+    else Token invalid
+        AuthMiddleware-->>LogUserAction: 401 Unauthorized
+        
+        LogUserAction->>ActionLogService: store(ActionLogDTO)
+        ActionLogService->>ActionLogRepository: Save log
+        ActionLogRepository-->>ActionLogService: Confirm save
+        
+        LogUserAction-->>Client: 401 Unauthorized
+    end
+

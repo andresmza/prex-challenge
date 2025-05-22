@@ -14,6 +14,42 @@ Este proyecto es una API RESTful para buscar y gestionar GIFs favoritos utilizan
 - Registro detallado de todas las acciones de los usuarios
 - Documentación completa con diagramas de secuencia y casos de uso
 
+## Nota importante  
+
+- En el endpoint de guardar favoritos no se envía el `user_id` porque la API ya conoce el usuario autenticado y no es necesario este dato
+- El campo `gif_id` se cambió de numérico a alfanumérico porque Giphy maneja IDs alfanuméricos
+
+
+## Documentación gráfica del proyecto
+
+- [Ver Documentación Gráfica](app/docs/README.md)
+
+## Documentación para pruebas con Postman
+
+En la documentación del proyecto se incluyen los archivos de environment y collection de Postman para facilitar las pruebas de la API:
+
+
+- [Descargar Collection de Postman](app/docs/postman/PrexChallenge.postman_collection.json)
+- [Descargar Environment Local](app/docs/postman/Prex%20Challenge%20(local).postman_environment.json)
+- [Descargar Environment Producción](app/docs/postman/Prex%20Challenge%20(production).postman_environment.json)
+
+## Despliegue en producción
+
+El sistema se encuentra desplegado y disponible en la siguiente URL:
+
+- [https://prex.andresmza.com.ar](https://prex.andresmza.com.ar)
+
+## Credenciales de prueba
+
+Puedes utilizar las siguientes credenciales para probar el sistema:
+
+```
+Usuario: prex_challenge@prexcard.com.ar
+Contraseña: Mendoza2025
+```
+
+# Instalación local
+
 ## Requisitos
 
 - Docker y Docker Compose
@@ -43,7 +79,6 @@ Edita el archivo `.env` si necesitas personalizar alguna configuración.
 Edita el archivo `.env` y configura las siguientes variables:
 
 ```
-DB_CONNECTION=mysql
 DB_HOST=prex_challenge_db
 DB_PORT=3306
 DB_DATABASE=prex_challenge
@@ -122,9 +157,10 @@ Una vez completados los pasos anteriores, puedes acceder a la aplicación en:
 
 - http://localhost
 
+
 ## Ejecutar pruebas
 
-El proyecto está configurado para ejecutar pruebas usando SQLite en memoria, lo que evita afectar la base de datos de desarrollo.
+El proyecto está configurado para ejecutar pruebas unitarias y de integración.
 
 ### Ejecutar pruebas con el entorno de testing
 
@@ -144,12 +180,12 @@ docker logs prex_challenge_app
 ### Detener los contenedores
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### Detener y eliminar volúmenes (borra la base de datos)
 
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 

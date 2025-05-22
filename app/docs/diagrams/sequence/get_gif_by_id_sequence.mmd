@@ -1,0 +1,77 @@
+%% Diagram of getting a GIF by ID using the Giphy API
+
+sequenceDiagram
+    participant Client
+    participant Router
+    participant LogUserAction
+    participant AuthMiddleware
+    participant GiphyController
+    participant GetGifByIdRequest
+    participant GiphyService
+    participant HttpClient
+    participant GiphyAPI
+    participant ActionLogService
+    participant ActionLogRepository
+
+    Client->>Router: GET /api/gifs/{gifId}
+    Router->>LogUserAction: Handle request
+    LogUserAction->>AuthMiddleware: Forward request
+    
+    AuthMiddleware->>AuthMiddleware: Validate token
+    alt Token valid
+        AuthMiddleware->>GiphyController: Forward authenticated request
+        
+        GiphyController->>GetGifByIdRequest: Validate request
+        GetGifByIdRequest-->>GiphyController: Request validated
+        
+        GiphyController->>GiphyService: getGifById(gifId)
+        GiphyService->>GiphyService: validateApiConfiguration()
+        
+        alt Configuration valid
+            GiphyService->>HttpClient: Request GIPHY API for specific GIF
+            HttpClient->>GiphyAPI: GET /{gifId} with API key
+            GiphyAPI-->>HttpClient: JSON response
+            HttpClient-->>GiphyService: Response
+            
+            alt GIF found in API
+                GiphyService->>GiphyService: Process data and create DTO
+                GiphyService-->>GiphyController: Return GifItemDTO
+                GiphyController-->>AuthMiddleware: 200 OK with GIF details
+                AuthMiddleware-->>LogUserAction: 200 OK with GIF details
+                
+                LogUserAction->>ActionLogService: store(ActionLogDTO)
+                ActionLogService->>ActionLogRepository: Save log
+                ActionLogRepository-->>ActionLogService: Confirm save
+                
+                LogUserAction-->>Client: 200 OK with GIF details
+            else GIF not found
+                GiphyService-->>GiphyController: null
+                GiphyController-->>AuthMiddleware: 404 Not Found
+                AuthMiddleware-->>LogUserAction: 404 Not Found
+                
+                LogUserAction->>ActionLogService: store(ActionLogDTO)
+                ActionLogService->>ActionLogRepository: Save log
+                ActionLogRepository-->>ActionLogService: Confirm save
+                
+                LogUserAction-->>Client: 404 Not Found
+            end
+        else Invalid Configuration
+            GiphyService-->>GiphyController: GiphyApiException (config error)
+            GiphyController-->>AuthMiddleware: 500 Internal Server Error
+            AuthMiddleware-->>LogUserAction: 500 Internal Server Error
+            
+            LogUserAction->>ActionLogService: store(ActionLogDTO)
+            ActionLogService->>ActionLogRepository: Save log
+            ActionLogRepository-->>ActionLogService: Confirm save
+            
+            LogUserAction-->>Client: 500 Internal Server Error
+        end
+    else Token invalid
+        AuthMiddleware-->>LogUserAction: 401 Unauthorized
+        
+        LogUserAction->>ActionLogService: store(ActionLogDTO)
+        ActionLogService->>ActionLogRepository: Save log
+        ActionLogRepository-->>ActionLogService: Confirm save
+        
+        LogUserAction-->>Client: 401 Unauthorized
+    end

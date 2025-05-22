@@ -1,0 +1,39 @@
+graph TB
+    %% Actors
+    User((User))
+    GiphyAPI((GIPHY API))
+    Database[(Database)]
+    
+    %% Main Use Cases
+    UC1[Authentication]
+    UC2[Search GIFs]
+    UC3[View GIF Details]
+    UC4[Save GIF as Favorite]
+    
+    %% Relationships
+    User -->|performs| UC1
+    User -->|performs| UC2
+    User -->|performs| UC3
+    User -->|performs| UC4
+    
+    UC1 -.->|uses| Database
+    UC2 -.->|uses| GiphyAPI
+    UC3 -.->|uses| GiphyAPI
+    UC4 -.->|uses| GiphyAPI
+    UC4 -.->|uses| Database
+    
+    %% Authentication requirement
+    UC2 -.->|requires| UC1
+    UC3 -.->|requires| UC1
+    UC4 -.->|requires| UC1
+    
+    %% Style
+    classDef usecase fill:#f9f,stroke:#333,stroke-width:1px;
+    classDef actor fill:#bbf,stroke:#333,stroke-width:2px;
+    classDef external fill:#bfb,stroke:#333,stroke-width:1px;
+    classDef datastore fill:#ffd,stroke:#333,stroke-width:1px;
+    
+    class UC1,UC2,UC3,UC4 usecase;
+    class User actor;
+    class GiphyAPI external;
+    class Database datastore;
