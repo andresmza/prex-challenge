@@ -33,6 +33,15 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AuthServiceInterface::class, AuthService::class);
 
         $this->app->bind(FavoriteServiceInterface::class, FavoriteService::class);
+
+        $this->app->bind(
+            \App\Repositories\ActionLog\ActionLogRepositoryInterface::class,
+            \App\Repositories\ActionLog\EloquentActionLogRepository::class
+        );
+        $this->app->bind(
+            \App\Services\ActionLog\ActionLogServiceInterface::class,
+            \App\Services\ActionLog\ActionLogService::class
+        );
     }
 
     /**
